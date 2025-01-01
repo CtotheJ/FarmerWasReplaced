@@ -1,0 +1,35 @@
+#MAZE
+#while num_items(Items.Gold) < 300000:
+#	makeMoney(300000)
+
+#DINOSAURS	
+#while num_items(Items.Bone) < 98010:
+#	makeBones(98010)
+
+#CACTUS
+#while num_items(Items.Cactus) < 100000:
+#	makeCactus(100000)
+
+#PUMPKINS
+while num_items(Items.Pumpkin) < 100000:
+	makePumpkins(100000)
+
+#CARROTS
+#while num_items(Items.Carrot) < 100000:
+#	makeCarrots(100000)
+
+#WOOD
+#while num_items(Items.Wood) < 100000:
+#	makeWood(100000)
+
+#HAY
+#while num_items(Items.Hay) < 100000:
+#	makeHayWood(100000)
+
+#POLYCULTURE
+#while num_items(Items.Carrot) < 100000 and num_items(Items.Wood) < 100000 and num_items(Items.Hay) < 100000:
+#	makePoly(Entities.Carrot, 100000)
+	
+#SUNFLOWERS
+#while num_items(Items.Power) < 100000:
+#	makePower(100000)
