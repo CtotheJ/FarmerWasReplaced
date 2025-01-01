@@ -1,0 +1,70 @@
+def getPrereqsPumpkins(entity2, preqty2):
+	cost4 = get_cost(entity2)
+	for item4 in cost4:
+		while num_items(item4) < cost4[item4] * preqty2:
+			if item4 == Items.Hay:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Grass, cost4[item4] * preqty2)
+				else:
+					makeHay(cost4[item4] * preqty2)
+			if item4 == Items.Wood:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Tree, cost4[item4] * preqty2)
+				else:
+					if num_unlocked(Unlocks.Trees) > 0:
+						makeHayWood(cost4[item4] * preqty2)
+					else:
+						makeWood(cost4[item4] * preqty2)
+			if item4 == Items.Carrot:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Carrot, cost4[item4] * preqty2)
+				else:
+					makeCarrots(cost4[item4] * preqty2)
+			if item4 == Items.Pumpkin:
+				makePumpkins(cost4[item4] * preqty2)
+			if item4 == Items.Cactus:
+				makeCactus(cost4[item4] * preqty2)
+			if item4 == Items.Bone:
+				makeBones(cost4[item4] * preqty2)
+			if item4 == Items.Gold:
+				makeMoney(cost4[item4] * preqty2)
+
+def makePumpkins(qtyPumpkins):
+	gridPumpkins = get_world_size()
+	if gridPumpkins > 5:
+		gridPumpkins = 5
+	pumpkinAvg = (get_world_size() ** 2) * gridPumpkins
+	pumpkinMult = (qtyPumpkins - num_items(Items.Pumpkin)) / pumpkinAvg
+	adj_qtyPumpkins = (get_world_size() ** 2) * pumpkinMult
+	
+	getPrereqsPumpkins(Entities.Pumpkin, adj_qtyPumpkins)
+	
+	varCount = 1
+	ws = get_world_size()
+	ws -= 1
+	
+	clear()
+	while num_items(Items.Pumpkin) < qtyPumpkins:
+		for i in range(get_world_size()):
+			if get_water() < .75 and num_items(Items.Water) > 0:
+				use_item(Items.Water)
+			if varCount == 6:
+				if can_harvest():
+					harvest()
+			if varCount > 1 and varCount < 6:
+				while not get_entity_type() == Entities.Pumpkin:
+					plant(Entities.Pumpkin)
+			if varCount == 1:
+				if get_ground_type() == Grounds.Soil:
+					plant(Entities.Pumpkin)
+				else:
+					till()
+					plant(Entities.Pumpkin)
+			if get_pos_x() == ws and get_pos_y() == ws:
+				varCount += 1
+				if varCount == 6:
+					do_a_flip()
+				if varCount > 6:
+					varCount = 1
+			move(North)
+		move(East)
