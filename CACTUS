@@ -1,0 +1,84 @@
+def getPrereqsCactus(entity4, preqty4):
+	cost6 = get_cost(entity4)
+	for item6 in cost6:
+		while num_items(item6) < cost6[item6] * preqty4:
+			if item6 == Items.Hay:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Grass, cost6[item6] * preqty4)
+				else:
+					makeHay(cost6[item6] * preqty4)
+			if item6 == Items.Wood:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Tree, cost6[item6] * preqty4)
+				else:
+					if num_unlocked(Unlocks.Trees) > 0:
+						makeHayWood(cost6[item6] * preqty4)
+					else:
+						makeWood(cost6[item6] * preqty4)
+			if item6 == Items.Carrot:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Carrot, cost6[item6] * preqty4)
+				else:
+					makeCarrots(cost6[item6] * preqty4)
+			if item6 == Items.Pumpkin:
+				makePumpkins(cost6[item6] * preqty4)
+			if item6 == Items.Cactus:
+				makeCactus(cost6[item6] * preqty4)
+			if item6 == Items.Bone:
+				makeBones(cost6[item6] * preqty4)
+			if item6 == Items.Gold:
+				makeMoney(cost6[item6] * preqty4)
+				
+def makeCactus(qtyCactus):
+	gridCactus = get_world_size()
+	cactusCount = (gridCactus ** 2) / 2
+	cactusAvg = cactusCount ** 2
+	cactusMult = (qtyCactus - num_items(Items.Cactus)) / cactusAvg
+	adj_qtyCactus = (gridCactus ** 2) * cactusMult * 1.25
+	
+	getPrereqsCactus(Entities.Cactus, adj_qtyCactus)
+	
+	varCount = 1
+	plantPos = []
+	ws = get_world_size()
+	ws -= 1
+	
+	clear()
+	while num_items(Items.Cactus) < qtyCactus:
+		for i in range(get_world_size()):
+			if get_water() < .75 and num_items(Items.Water) > 0:
+				use_item(Items.Water)
+			if varCount >= 10:
+				if can_harvest():
+					harvest()
+			if varCount == 2 or varCount == 4 or varCount == 6 or varCount == 8:
+				for j in range(get_world_size()):
+					for k in range(get_world_size()):
+						eCactus = measure(East)
+						if measure() > eCactus:
+							swap(East)
+						move(East)
+					move(North)
+				move_to(ws, ws)
+			if varCount == 3 or varCount == 5 or varCount == 7 or varCount == 9:
+				for m in range(get_world_size()):
+					for n in range(get_world_size()):
+						nCactus = measure(North)
+						if measure() > nCactus:
+							swap(North)
+						move(North)
+					move(East)
+				move_to(ws, ws)
+			if varCount == 1:
+				if get_ground_type() == Grounds.Soil:
+					plant(Entities.Cactus)
+				else:
+					till()
+					plant(Entities.Cactus)
+			if get_pos_x() == ws and get_pos_y() == ws:
+				if varCount >= 10:
+					varCount = 1
+				else:
+					varCount += 1
+			move(North)
+		move(East)
