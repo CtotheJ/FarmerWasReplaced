@@ -1,0 +1,86 @@
+def getPrereqsPower(entity6, preqty6):
+	cost8 = get_cost(entity6)
+	for item8 in cost8:
+		while num_items(item8) < cost8[item8] * preqty6:
+			if item8 == Items.Hay:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Grass, cost8[item8] * preqty6)
+				else:
+					makeHay(cost8[item8] * preqty6)
+			if item8 == Items.Wood:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Tree, cost8[item8] * preqty6)
+				else:
+					if num_unlocked(Unlocks.Trees) > 0:
+						makeHayWood(cost8[item8] * preqty6)
+					else:
+						makeWood(cost8[item8] * preqty6)
+			if item8 == Items.Carrot:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Carrot, cost8[item8] * preqty6)
+				else:
+					makeCarrots(cost8[item8] * preqty6)
+			if item8 == Items.Pumpkin:
+				makePumpkins(cost8[item8] * preqty6)
+			if item8 == Items.Cactus:
+				makeCactus(cost8[item8] * preqty6)
+			if item8 == Items.Bone:
+				makeBones(cost8[item8] * preqty6)
+			if item8 == Items.Gold:
+				makeMoney(cost8[item8] * preqty6)
+
+def makePower(qtyPower):
+
+	adj_qtyPower = (qtyPower - num_items(Items.Power)) / num_unlocked(Unlocks.Sunflowers)
+	
+	getPrereqsPower(Entities.Sunflower, adj_qtyPower)
+	
+	varCount = 1
+	listTemp = []
+	listPower = []
+	dictPower = {}
+	dictPowerFinal = {}
+	ws = get_world_size()
+	ws -= 1
+	
+	clear()
+	while num_items(Items.Power) < qtyPower:
+		for i in range(get_world_size()):
+			if get_water() < .75 and num_items(Items.Water) > 0:
+				use_item(Items.Water)
+			if varCount == 2:
+				for cur_pos in dictPower:
+					move_to(cur_pos[0], cur_pos[1])
+					if can_harvest():
+						harvest()
+				move_to(ws, ws)
+			if varCount == 1:
+				if get_ground_type() == Grounds.Soil:
+					plant(Entities.Sunflower)
+				else:
+					till()
+					plant(Entities.Sunflower)
+				dictPower[(get_pos_x(), get_pos_y())] = measure()
+			if get_pos_x() == ws and get_pos_y() == ws:
+				varCount += 1
+				if varCount == 2:
+					#Sort positions in descending order
+					for position in dictPower:
+						listTemp = [position, dictPower[position]]
+						listPower.append(listTemp)
+					n = len(listPower)
+												
+					for i in range(n - 1):
+						for j in range(0, n - i - 1):
+							if listPower[j][1] < listPower[j + 1][1]:
+								listPower[j], listPower[j + 1] = listPower[j + 1], listPower[j]
+					for k in range(n):
+						dictPowerFinal[listPower[k][0]] = listPower[k][1]
+						
+					dictPower = dictPowerFinal
+
+				if varCount > 2:
+					varCount = 1
+					listPower = []
+			move(North)
+		move(East)
