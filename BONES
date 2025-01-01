@@ -1,0 +1,95 @@
+def getPrereqsBones(entity5, preqty5):
+	cost7 = get_cost(entity5)
+	for item7 in cost7:
+		while num_items(item7) < cost7[item7] * preqty5:
+			if item7 == Items.Hay:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Grass, cost7[item7] * preqty5)
+				else:
+					makeHay(cost7[item7] * preqty5)
+			if item7 == Items.Wood:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Tree, cost7[item7] * preqty5)
+				else:
+					if num_unlocked(Unlocks.Trees) > 0:
+						makeHayWood(cost7[item7] * preqty5)
+					else:
+						makeWood(cost7[item7] * preqty5)
+			if item7 == Items.Carrot:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Carrot, cost7[item7] * preqty5)
+				else:
+					makeCarrots(cost7[item7] * preqty5)
+			if item7 == Items.Pumpkin:
+				makePumpkins(cost7[item7] * preqty5)
+			if item7 == Items.Cactus:
+				makeCactus(cost7[item7] * preqty5)
+			if item7 == Items.Bone:
+				makeBones(cost7[item7] * preqty5)
+			if item7 == Items.Gold:
+				makeMoney(cost7[item7] * preqty5)
+
+def makeBones(qtyBones):
+	adj_qty = qtyBones - num_items(Items.Bone)
+	max_bones = (get_world_size() ** 2) ** 2
+	apples_needed = adj_qty / max_bones + 100
+	
+	getPrereqsBones(Entities.Apple, apples_needed)
+	
+	ws = get_world_size()
+	ws -= 1
+	curPos = (ws, ws)
+	
+	clear()
+	change_hat(Hats.Dinosaur_Hat)
+	
+	def dinoSearch(dir):
+		move(dir)
+		for i in range(get_world_size() - 3):
+			lastPos = (curPos[0], curPos[1])
+			curPos = (get_pos_x(), get_pos_y())
+			if lastPos == curPos:
+				change_hat(Hats.Dinosaur_Hat)
+				move_to(0, 0)
+				change_hat(Hats.Dinosaur_Hat)
+			move(dir)
+		move(East)
+	
+	def dinoOuterCol(dir):
+		move(dir)
+		for i in range(get_world_size() - 1):
+			lastPos = (curPos[0], curPos[1])
+			curPos = (get_pos_x(), get_pos_y())
+			if lastPos == curPos:
+				change_hat(Hats.Dinosaur_Hat)
+				move_to(0, 0)
+				change_hat(Hats.Dinosaur_Hat)
+			move(dir)
+		if curPos[0] < ws:
+			move(East)
+		
+	def dinoWest():
+		move(West)
+		for j in range(get_world_size() - 1):
+			lastPos = (curPos[0], curPos[1])
+			curPos = (get_pos_x(), get_pos_y())
+			if lastPos == curPos:
+				change_hat(Hats.Dinosaur_Hat)
+				move_to(0, 0)
+				change_hat(Hats.Dinosaur_Hat)
+			move(West)
+	
+	while num_items(Items.Bone) < qtyBones:
+		for k in range(get_world_size()):
+			if get_pos_x() % 2 == 0:
+				if get_pos_x() == 0:
+					dinoOuterCol(North)
+				else:
+					dinoSearch(North)
+			else:
+				if get_pos_x() == ws:
+					dinoOuterCol(South)
+				else:
+					dinoSearch(South)
+		dinoWest()
+	
