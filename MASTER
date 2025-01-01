@@ -1,0 +1,102 @@
+dictUnlocks = {0:Unlocks.Speed, 1:Unlocks.Grass, 2:Unlocks.Expand, 3:Unlocks.Plant, 4:Unlocks.Carrots, 
+	5:Unlocks.Watering, 6:Unlocks.Trees, 7:Unlocks.Fertilizer, 8:Unlocks.Sunflowers, 9:Unlocks.Pumpkins, 
+	10:Unlocks.Cactus, 11:Unlocks.Dinosaurs, 12:Unlocks.Mazes, 13:Unlocks.Polyculture, 14:Unlocks.Leaderboard}
+	
+def move_to(x, y):
+	while get_pos_y() < y:
+		move(North)
+	while get_pos_y() > y:
+		move(South)
+	while get_pos_x() < x:
+		move(East)
+	while get_pos_x() > x:
+		move(West)
+	
+def next_unlock(unlock_num):
+	unlock_name = dictUnlocks[unlock_num]
+	unlock_level = num_unlocked(unlock_name)
+	unlock_cost = get_cost(unlock_name)
+	unlock_info = unlock_name, unlock_level, unlock_cost
+	return unlock_info
+	
+def unlock_skill(unlockID, level):
+	unlock_start = get_time()
+	while num_unlocked(dictUnlocks[unlockID]) < level:
+		cost = next_unlock(unlockID)[2]
+		if dictUnlocks[unlockID] == Unlocks.Expand:
+			if level == 7:
+				cost = {Items.Bone:5000}
+			elif level == 9:
+				cost = {Items.Bone:80000}
+		for item in cost:
+			while num_items(item) < cost[item]:
+				if item == Items.Hay:
+					if num_unlocked(Unlocks.Polyculture) > 0:
+						makePoly(Entities.Grass, cost[item])
+					else:
+						makeHay(cost[item])
+				if item == Items.Wood:
+					if num_unlocked(Unlocks.Polyculture) > 0:
+						makePoly(Entities.Tree, cost[item])
+					else:
+						if num_unlocked(Unlocks.Trees) > 0:
+							makeHayWood(cost[item])
+						else:
+							makeWood(cost[item])
+				if item == Items.Carrot:
+					if num_unlocked(Unlocks.Polyculture) > 0:
+						makePoly(Entities.Carrot, cost[item])
+					else:
+						makeCarrots(cost[item])
+				if item == Items.Pumpkin:
+					makePumpkins(cost[item])
+				if item == Items.Cactus:
+					makeCactus(cost[item])
+				if item == Items.Bone:
+					makeBones(cost[item])
+				if item == Items.Gold:
+					makeMoney(cost[item])
+		unlock(dictUnlocks[unlockID])
+		unlock_time = get_time() - unlock_start
+		quick_print(unlock_time, "sec -", dictUnlocks[unlockID], "lvl", num_unlocked(dictUnlocks[unlockID]))
+		
+def startRun():
+	while num_unlocked(Unlocks.Leaderboard) == 0:
+		unlock_skill(0, 1) #Speed
+		unlock_skill(2, 1) #Expand
+		unlock_skill(3, 1) #Plant
+		unlock_skill(1, 1) #Grass
+		unlock_skill(0, 2) #Speed
+		unlock_skill(2, 2) #Expand
+		unlock_skill(4, 1) #Carrots
+		unlock_skill(5, 1) #Water
+		unlock_skill(6, 1) #Trees
+		unlock_skill(7, 1) #Fertilizer
+		unlock_skill(1, 2) #Grass
+		unlock_skill(6, 2) #Trees
+		unlock_skill(0, 3) #Speed
+		unlock_skill(2, 3) #Expand
+		unlock_skill(9, 1) #Pumpkins
+		unlock_skill(1, 3) #Grass
+		unlock_skill(6, 3) #Trees
+		unlock_skill(5, 5) #Water
+		unlock_skill(7, 2) #Fertilizer
+		unlock_skill(4, 2) #Carrots
+		unlock_skill(1, 4) #Grass
+		unlock_skill(6, 4) #Trees
+		unlock_skill(4, 3) #Carrots
+		unlock_skill(9, 2) #Pumpkins
+		unlock_skill(0, 6) #Speed
+		unlock_skill(2, 4) #Expand
+		unlock_skill(5, 10) #Water
+		unlock_skill(7, 4) #Fertilizer
+		unlock_skill(10, 1) #Cactus
+		unlock_skill(11, 1) #Dinosaurs
+		unlock_skill(12, 1) #Mazes
+		unlock_skill(13, 2) #Polyculture
+
+		# DETERMINE YOUR OWN WAY FORWARD WITH THE REST OF THE UPGRADES
+
+		unlock_skill(14, 1) #Leaderboard
+
+startRun()
