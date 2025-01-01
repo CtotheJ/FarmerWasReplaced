@@ -1,0 +1,17 @@
+def makeWood(qtyWood):
+	clear()
+	adj_qty = qtyWood - num_items(Items.Wood)
+	while num_items(Items.Wood) < qtyWood:
+		for i in range(get_world_size()):
+			if can_harvest():
+				harvest()
+				if get_pos_x() % 2 == 0 and get_pos_y() % 2 == 0 and num_unlocked(Unlocks.Trees) > 0:
+					plant(Entities.Tree)
+				elif get_pos_x() % 2 == 1 and get_pos_y() % 2 == 1 and num_unlocked(Unlocks.Trees) > 0:
+					plant(Entities.Tree)
+				else:
+					plant(Entities.Bush)
+			move(North)
+			if get_water() < .75 and num_items(Items.Water) > 0:
+				use_item(Items.Water)
+		move(East)
