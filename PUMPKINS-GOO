@@ -1,0 +1,72 @@
+def getPrereqsGoo(entity3, preqty3):
+	cost5 = get_cost(entity3)
+	for item5 in cost5:
+		while num_items(item5) < cost5[item5] * preqty3:
+			if item5 == Items.Hay:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Grass, cost5[item5] * preqty3)
+				else:
+					makeHay(cost5[item5] * preqty3)
+			if item5 == Items.Wood:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Tree, cost5[item5] * preqty3)
+				else:
+					if num_unlocked(Unlocks.Trees) > 0:
+						makeHayWood(cost5[item5] * preqty3)
+					else:
+						makeWood(cost5[item5] * preqty3)
+			if item5 == Items.Carrot:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Carrot, cost5[item5] * preqty3)
+				else:
+					makeCarrots(cost5[item5] * preqty3)
+			if item5 == Items.Pumpkin:
+				makePumpkins(cost5[item5] * preqty3)
+			if item5 == Items.Cactus:
+				makeCactus(cost5[item5] * preqty3)
+			if item5 == Items.Bone:
+				makeBones(cost5[item5] * preqty3)
+			if item5 == Items.Gold:
+				makeMoney(cost5[item5] * preqty3)
+
+def makeGoo(qtyGoo):
+	gridGoo = get_world_size()
+	if gridGoo > 5:
+		gridGoo = 5
+	gooAvg = (get_world_size() ** 2) * gridGoo * 0.75
+	gooMult = (qtyGoo - num_items(Items.Weird_Substance)) / gooAvg
+	adj_qtyGoo = (get_world_size() ** 2) * gooMult * 1.25
+	
+	getPrereqsGoo(Entities.Pumpkin, adj_qtyGoo)
+	
+	varCount = 1
+	ws = get_world_size()
+	ws -= 1
+	
+	clear()
+	while num_items(Items.Weird_Substance) < qtyGoo:
+		for i in range(get_world_size()):
+			if get_water() < .75 and num_items(Items.Water) > 0:
+				use_item(Items.Water)
+			if varCount == 3:
+				harvest()
+				varCount = 1
+			if varCount == 2:
+				while not get_entity_type() == Entities.Pumpkin:
+					plant(Entities.Pumpkin)
+					if num_items(Items.Fertilizer) > 0:
+						use_item(Items.Fertilizer)
+					else:
+						do_a_flip()
+			if varCount == 1:
+				if get_ground_type() == Grounds.Soil:
+					plant(Entities.Pumpkin)
+				else:
+					till()
+					plant(Entities.Pumpkin)
+				if num_items(Items.Fertilizer) > 0:
+					use_item(Items.Fertilizer)
+			if get_pos_x() == ws and get_pos_y() == ws:
+				varCount += 1
+			move(North)
+		move(East)
