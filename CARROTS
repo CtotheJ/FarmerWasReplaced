@@ -1,0 +1,51 @@
+def getPrereqsCarrots(entity1, preqty1):
+	cost3 = get_cost(entity1)
+	for item3 in cost3:
+		while num_items(item3) < cost3[item3] * preqty1:
+			if item3 == Items.Hay:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Grass, cost3[item3] * preqty1)
+				else:
+					makeHay(cost3[item3] * preqty1)
+			if item3 == Items.Wood:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Tree, cost3[item3] * preqty1)
+				else:
+					if num_unlocked(Unlocks.Trees) > 0:
+						makeHayWood(cost3[item3] * preqty1)
+					else:
+						makeWood(cost3[item3] * preqty1)
+			if item3 == Items.Carrot:
+				if num_unlocked(Unlocks.Polyculture) > 0:
+					makePoly(Entities.Carrot, cost3[item3] * preqty1)
+				else:
+					makeCarrots(cost3[item3] * preqty1)
+			if item3 == Items.Pumpkin:
+				makePumpkins(cost3[item3] * preqty1)
+			if item3 == Items.Cactus:
+				makeCactus(cost3[item3] * preqty1)
+			if item3 == Items.Bone:
+				makeBones(cost3[item3] * preqty1)
+			if item3 == Items.Gold:
+				makeMoney(cost3[item3] * preqty1)
+
+def makeCarrots(qtyCarrots):
+
+	adj_qtyCarrots = (qtyCarrots - num_items(Items.Carrot)) / num_unlocked(Unlocks.Carrots)
+	
+	getPrereqsCarrots(Entities.Carrot, adj_qtyCarrots)
+	
+	clear()
+	while num_items(Items.Carrot) < qtyCarrots:
+		for i in range(get_world_size()):
+			if can_harvest():
+				harvest()
+			if get_ground_type() == Grounds.Soil:
+				plant(Entities.Carrot)
+			else:
+				till()
+				plant(Entities.Carrot)
+			move(North)
+			if get_water() < .75 and num_items(Items.Water) > 0:
+				use_item(Items.Water)
+		move(East)
