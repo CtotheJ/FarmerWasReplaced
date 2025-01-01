@@ -1,0 +1,11 @@
+def makeHay(qtyHay):
+	clear()
+	adj_qty = qtyHay - num_items(Items.Hay)
+	while num_items(Items.Hay) < qtyHay:
+		for i in range(get_world_size()):
+			if can_harvest():
+				harvest()
+			move(North)
+			if get_water() < .75 and num_items(Items.Water) > 0:
+				use_item(Items.Water)
+		move(East)
