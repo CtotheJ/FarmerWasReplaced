@@ -1,0 +1,34 @@
+def makePoly(itemPoly, qtyPoly):
+	clear()
+	ws = get_world_size()
+	ws -= 1
+	poly_comp = None
+	new_comp = None
+
+	if itemPoly == Entities.Grass:
+		polyPlant = Items.Hay
+	elif itemPoly == Entities.Bush:
+		polyPlant = Items.Wood
+	elif itemPoly == Entities.Tree:
+		polyPlant = Items.Wood
+	else:
+		polyPlant = Items.Carrot
+	
+	if num_items(Items.Wood) < 1000 or num_items(Items.Hay) < 1000:
+		makeHayWood(1000)
+	while num_items(polyPlant) < qtyPoly:
+		if get_water() < .75 and num_items(Items.Water) > 0:
+			use_item(Items.Water)
+		if get_ground_type() != Grounds.Soil:
+			till()
+		if poly_comp == None:
+			plant(Entities.Grass)
+		else:
+			plant(poly_comp[0])
+		poly_comp = get_companion()
+		move_to(poly_comp[1][0], poly_comp[1][1])
+		if can_harvest():
+			harvest()
+
+		
+		
